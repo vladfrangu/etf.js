@@ -1,0 +1,6 @@
+{
+	"extends": "bamboo",
+	"globals": {
+		"BigInt": true
+	}
+}

@@ -1,0 +1,33 @@
+# Packages
+node_modules/
+package-lock.json
+yarn.lock
+
+# Log files
+logs/
+*.log
+
+# Miscellaneous
+.tmp/
+.vscode/
+.vs/
+.idea/
+
+# Coverage
+.nyc_output/
+coverage/
+
+# NPM ignore
+.github/
+docs/
+dist/test/
+dist/tsconfig.tsbuildinfo
+src/
+.eslintignore
+.eslintrc.json
+.gitattributes
+.gitignore
+.nycrc.json
+azure-pipelines.yml
+tsconfig.json
+webpack.config.js

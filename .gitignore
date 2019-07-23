@@ -1,0 +1,13 @@
+node_modules/
+webpack/
+package-lock.json
+*.log
+dist/
+.vs/
+
+# Coverage
+.nyc_output/
+coverage/
+
+# Test results
+test.xml
