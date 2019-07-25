@@ -32,6 +32,9 @@
   "dependencies": {
     "pako": "^1.0.10"
   },
+  "contributors": [
+    "Antonio Román <kyradiscord@gmail.com> (https://kyranet.dev)"
+  ],
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
     "@types/node": "^12.6.8",
@@ -39,6 +42,7 @@
     "@types/tape": "^4.2.33",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
+    "erlpack": "github:discordapp/erlpack",
     "eslint": "^6.1.0",
     "eslint-config-bamboo": "^1.3.0",
     "nyc": "^14.1.1",
