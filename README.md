@@ -48,15 +48,15 @@ console.log(deserialized); // { hello: 'world' }
 
 ### What can be packed
 
-- [x] Null
-- [x] Booleans
-- [x] Strings
+- [x] Null ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
+- [x] Booleans ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
+- [x] Strings ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
 - [x] Atoms ([Atom Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/atoms.ts))
 - [x] Unicode Strings
-- [x] Floats
-- [x] Integers
-- [x] Longs
-- [x] Longs over 64 bits
+- [x] Floats ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
+- [x] Integers ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
+- [x] Longs ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
+- [x] Longs over 64 bits ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
 - [x] Objects
 - [x] Arrays
 - [ ] Tuples

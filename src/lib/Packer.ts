@@ -102,7 +102,7 @@ class Packer {
 			b >>= 8n;
 		}
 
-		this._buffer![byteCountIndex] = byteCount;
+		this.write32At(byteCount, byteCountIndex);
 	}
 
 	private writeString(value: string) {
