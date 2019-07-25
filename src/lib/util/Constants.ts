@@ -1,4 +1,5 @@
 export const Tokens = Object.freeze({
+	DISTRIBUTION_HEADER: 68,
 	NEW_FLOAT_EXT: 70,
 	BIT_BINARY_EXT: 77,
 	ATOM_CACHE_REF: 82,

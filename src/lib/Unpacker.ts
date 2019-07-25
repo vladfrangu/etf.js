@@ -1,5 +1,6 @@
 import { Tokens, ETF_VERSION } from './util/Constants';
-import { PortData, NewReferenceData, PidData, ExportData } from './util/Types';
+import { PortData, NewReferenceData, PidData, ExportData, FunData, NewFunData, Atom } from './util/Types';
+import * as pako from 'pako';
 
 const float64Array = new Float64Array(1);
 const uInt8Float64Array = new Uint8Array(float64Array.buffer);
@@ -15,11 +16,13 @@ export class Unpacker {
 
 	public unpack() {
 		if (this.read8() !== ETF_VERSION) throw new Error('Incompatible ETF version.');
-		if (this.read8() === Tokens.COMPRESSED) this.decompress();
+		const tag = this.read8();
+		if (tag === Tokens.DISTRIBUTION_HEADER) throw new Error('Distribution headers are not supported');
+		if (tag === Tokens.COMPRESSED) return this.decompress();
 		return this.read();
 	}
 
-	private read() {
+	private read(): unknown {
 		const type = this.read8();
 		switch (type) {
 			case Tokens.ATOM_CACHE_REF: return this.readAtomCacheRef();
@@ -60,7 +63,7 @@ export class Unpacker {
 	 * @internal
 	 */
 	private readAtomCacheRef() {
-		// TODO(kyranet): Finish this
+		throw new Error('Unimplemented');
 	}
 
 	/**
@@ -93,7 +96,7 @@ export class Unpacker {
 	 * @internal
 	 */
 	private readFloatExt() {
-		return this.readF64();
+		return Number(this.readString(31));
 	}
 
 	/**
@@ -106,7 +109,7 @@ export class Unpacker {
 	 */
 	private readPortExt(): PortData {
 		return {
-			node: this.read(),
+			node: this.read() as string,
 			id: this.read32(),
 			creation: this.read8()
 		};
@@ -123,7 +126,7 @@ export class Unpacker {
 	 */
 	private readNewPortExt(): PortData {
 		return {
-			node: this.read(),
+			node: this.read() as string,
 			id: this.read32(),
 			creation: this.read32()
 		};
@@ -139,7 +142,7 @@ export class Unpacker {
 	 */
 	private readPidExt(): PidData {
 		return {
-			node: this.read(),
+			node: this.read() as Atom,
 			id: this.read32(),
 			serial: this.read32(),
 			creation: this.read8()
@@ -165,7 +168,7 @@ export class Unpacker {
 	 */
 	private readNewPidExt(): PidData {
 		return {
-			node: this.read(),
+			node: this.read() as Atom,
 			id: this.read32(),
 			serial: this.read32(),
 			creation: this.read32()
@@ -320,7 +323,7 @@ export class Unpacker {
 		const data: NewReferenceData = { node: null, creation: 0, id: [] };
 		const len = this.read16();
 
-		data.node = this.read();
+		data.node = this.read() as Atom;
 		data.creation = this.read8();
 
 		for (let i = 0; i < len; i++) data.id.push(this.read32());
@@ -348,7 +351,7 @@ export class Unpacker {
 		const data: NewReferenceData = { node: null, creation: 0, id: [] };
 		const len = this.read16();
 
-		data.node = this.read();
+		data.node = this.read() as Atom;
 		data.creation = this.read32();
 
 		for (let i = 0; i < len; i++) data.id.push(this.read32());
@@ -374,8 +377,23 @@ export class Unpacker {
 	 * | 117 | NumFree | Pid | Module | Index | Uniq | Free vars ... |
 	 * @internal
 	 */
-	private readFunExt() {
-		// TODO(kyranet): Having fun?
+	private readFunExt(): FunData {
+		const numFree = this.read32();
+		const pid = this.read() as PidData;
+		const module = this.read() as string;
+		const index = this.read() as number;
+		const uniq = this.read() as number;
+		const freeVars: unknown[] = [];
+		for (let i = 0; i < numFree; ++i) freeVars.push(this.read());
+
+		return {
+			numFree,
+			pid,
+			module,
+			index,
+			uniq,
+			freeVars
+		};
 	}
 
 	/**
@@ -408,8 +426,31 @@ export class Unpacker {
 	 * | 112 | Size | Arity | Uniq | Index | NumFree | Module | OldIndex | OldUniq | Pid | Free Vars |
 	 * @internal
 	 */
-	private readNewFunExt() {
-		// TODO(kyranet): Even more fun!
+	private readNewFunExt(): NewFunData {
+		const size = this.read32();
+		const arity = this.read8();
+		const uniq = this.readString(16);
+		const index = this.read32();
+		const numFree = this.read32();
+		const module = this.read() as string;
+		const oldIndex = this.read() as number;
+		const oldUniq = this.read() as number;
+		const pid = this.read() as PidData;
+		const freeVars: unknown[] = [];
+		for (let i = 0; i < numFree; ++i) freeVars.push(this.read());
+
+		return {
+			size,
+			arity,
+			uniq,
+			index,
+			numFree,
+			module,
+			oldIndex,
+			oldUniq,
+			pid,
+			freeVars
+		};
 	}
 
 	/**
@@ -423,9 +464,9 @@ export class Unpacker {
 	 */
 	private readExportExt(): ExportData {
 		return {
-			mod: this.read(),
-			fun: this.read(),
-			arity: this.read()
+			mod: this.read() as string,
+			fun: this.read() as string,
+			arity: this.read() as number
 		};
 	}
 
@@ -490,9 +531,11 @@ export class Unpacker {
 	}
 
 	private decompress() {
-		// const length = this.read32();
-		// Implement z-lib compression stuff
-		// TODO(vladfrangu): use pako for cross-compatible decompressing of data
+		// Read the length, but ignore it as we don't need it
+		this.read32();
+		const unpackedBuffer = pako.deflate(this._buffer!.subarray(this.offset));
+
+		return new Unpacker(unpackedBuffer).read();
 	}
 
 	private decodeBig(digits: number) {
