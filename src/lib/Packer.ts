@@ -1,4 +1,5 @@
-import { Tokens } from './util/Constants';
+import { Tokens, ETF_VERSION } from './util/Constants';
+import { AtomClass } from './structures/Atom';
 
 const float64Array = new Float64Array(1);
 const uInt8Float64Array = new Uint8Array(float64Array.buffer);
@@ -14,6 +15,7 @@ class Packer {
 	}
 
 	public process() {
+		this.write8(ETF_VERSION);
 		this.pack(this._data);
 		const temp = this._buffer!.subarray(0, this._offset);
 
@@ -36,6 +38,7 @@ class Packer {
 			case 'number': return this.writeNumber(value as number);
 			case 'string': return this.writeString(value as string);
 			case 'object': {
+				if (value instanceof AtomClass) return this.writeAtom(value.name);
 				if (Array.isArray(value) || value instanceof Set) return this.writeArray(value);
 				if (value instanceof Map) return this.writeMap(value);
 				return this.writeMap(value as Record<any, unknown>);
@@ -130,7 +133,12 @@ class Packer {
 		this.write32(entries.length);
 
 		for (const [key, value] of entries) {
-			this.pack(key);
+			const atomName = /Atom\((?<atomName>.+)\)/.exec(key);
+			if (atomName) {
+				this.writeAtom(atomName.groups!.atomName);
+			} else {
+				this.pack(key);
+			}
 			this.pack(value);
 		}
 	}

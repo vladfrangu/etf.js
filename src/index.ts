@@ -12,3 +12,5 @@ export const pack = (data: unknown) => new Packer(data).process();
  * @param buffer The raw data
  */
 export const unpack = (buffer: Uint8Array) => new Unpacker(buffer).unpack();
+
+export { default as Atom } from './lib/structures/Atom';

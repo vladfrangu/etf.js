@@ -49,12 +49,12 @@ console.log(deserialized); // { hello: 'world' }
 - [X] Null
 - [X] Booleans
 - [X] Strings
-- [ ] Atoms
+- [x] Atoms
 - [X] Unicode Strings
 - [X] Floats
 - [X] Integers
 - [x] Longs
-- [ ] Longs over 64 bits
+- [x] Longs over 64 bits
 - [X] Objects
 - [X] Arrays
 - [ ] Tuples
@@ -62,6 +62,8 @@ console.log(deserialized); // { hello: 'world' }
 - [ ] Ports
 - [ ] Exports
 - [ ] References
+
+Plus added support for Maps (will be converted into Objects) and Sets (will be converted into Arrays)
 
 ## Credits
 

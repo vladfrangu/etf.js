@@ -1,6 +1,7 @@
 import { Tokens, ETF_VERSION } from './util/Constants';
 import { PortData, NewReferenceData, PidData, ExportData, FunData, NewFunData, Atom } from './util/Types';
 import * as pako from 'pako';
+import AtomConstructor from './structures/Atom';
 
 const float64Array = new Float64Array(1);
 const uInt8Float64Array = new Uint8Array(float64Array.buffer);
@@ -19,36 +20,39 @@ export class Unpacker {
 		const tag = this.read8();
 		if (tag === Tokens.DISTRIBUTION_HEADER) throw new Error('Distribution headers are not supported');
 		if (tag === Tokens.COMPRESSED) return this.decompress();
-		return this.read();
+		return this.read(tag);
 	}
 
-	private read(): unknown {
-		const type = this.read8();
+	private read(tag?: number): unknown {
+		const type = typeof tag === 'number' ? tag : this.read8();
 		switch (type) {
+			case Tokens.NEW_FLOAT_EXT: return this.readNewFloatExt();
+			case Tokens.BIT_BINARY_EXT: return this.readBitBinaryExt();
 			case Tokens.ATOM_CACHE_REF: return this.readAtomCacheRef();
+			case Tokens.NEW_PID_EXT: return this.readNewPidExt();
+			case Tokens.NEW_PORT_EXT: return this.readNewPortExt();
+			case Tokens.NEWER_REFERENCE_EXT: return this.readNewerReferenceExt();
 			case Tokens.SMALL_INTEGER_EXT: return this.readSmallIntegerExt();
 			case Tokens.INTEGER_EXT: return this.readIntegerExt();
 			case Tokens.FLOAT_EXT: return this.readFloatExt();
+			// TODO: ATOM_EXT
+			// TODO: REFERENCE_EXT
 			case Tokens.PORT_EXT: return this.readPortExt();
-			case Tokens.NEW_PORT_EXT: return this.readNewPortExt();
 			case Tokens.PID_EXT: return this.readPidExt();
-			case Tokens.NEW_PID_EXT: return this.readNewPidExt();
 			case Tokens.SMALL_TUPLE_EXT: return this.readSmallTupleExt();
 			case Tokens.LARGE_TUPLE_EXT: return this.readLargeTupleExt();
-			case Tokens.MAP_EXT: return this.readMapExt();
 			case Tokens.NIL_EXT: return this.readNilExt();
 			case Tokens.STRING_EXT: return this.readStringExt();
 			case Tokens.LIST_EXT: return this.readListExt();
 			case Tokens.BINARY_EXT: return this.readBinaryExt();
 			case Tokens.SMALL_BIG_EXT: return this.readSmallBigExt();
 			case Tokens.LARGE_BIG_EXT: return this.readLargeBigExt();
-			case Tokens.NEW_REFERENCE_EXT: return this.readNewReferenceExt();
-			case Tokens.NEWER_REFERENCE_EXT: return this.readNewerReferenceExt();
-			case Tokens.FUN_EXT: return this.readFunExt();
 			case Tokens.NEW_FUN_EXT: return this.readNewFunExt();
 			case Tokens.EXPORT_EXT: return this.readExportExt();
-			case Tokens.BIT_BINARY_EXT: return this.readBitBinaryExt();
-			case Tokens.NEW_FLOAT_EXT: return this.readNewFloatExt();
+			case Tokens.NEW_REFERENCE_EXT: return this.readNewReferenceExt();
+			// TODO: SMALL_ATOM_EXT
+			case Tokens.MAP_EXT: return this.readMapExt();
+			case Tokens.FUN_EXT: return this.readFunExt();
 			case Tokens.ATOM_UTF8_EXT: return this.readAtomUtf8Ext();
 			case Tokens.SMALL_ATOM_UTF8_EXT: return this.readSmallAtomUtf8Ext();
 			default: throw new Error(`Unsupported erlang term type identifier found: ${type}`);
@@ -572,7 +576,7 @@ export class Unpacker {
 			return false;
 		}
 
-		return atom;
+		return AtomConstructor(atom as string);
 	}
 
 	private readString(length: number) {
