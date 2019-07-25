@@ -192,6 +192,7 @@ class Packer {
 	}
 
 	private static _textEncoder = new TextEncoder();
+
 }
 
 export { Packer };
