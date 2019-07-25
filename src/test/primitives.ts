@@ -20,7 +20,7 @@ test('null/undefined primitives', t => {
 
 	t.equal(unpackedNull, null, 'null primitive was not unpacked correctly');
 
-	const unpackedUndefined = unpack(pack(undefined)) as undefined;
+	const unpackedUndefined = unpack(pack(undefined)) as null;
 
 	t.equal(unpackedUndefined, null, 'undefined primitive was not unpacked correctly to null');
 });
