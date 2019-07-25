@@ -1,5 +1,6 @@
 # etf.js
 
+<!-- markdownlint-disable MD033 -->
 <div align="center">
   <p>
     <a href="https://www.npmjs.com/package/etf.js">
@@ -28,6 +29,7 @@
     <a href="https://nodei.co/npm/etf.js/"><img src="https://nodei.co/npm/etf.js.png?downloads=true&stars=true" alt="npm installnfo" /></a>
   </p>
 </div>
+<!-- markdownlint-enable MD033 -->
 
 ## About
 
@@ -46,17 +48,17 @@ console.log(deserialized); // { hello: 'world' }
 
 ### What can be packed
 
-- [X] Null
-- [X] Booleans
-- [X] Strings
-- [x] Atoms
-- [X] Unicode Strings
-- [X] Floats
-- [X] Integers
+- [x] Null
+- [x] Booleans
+- [x] Strings
+- [x] Atoms ([Atom Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/atoms.ts))
+- [x] Unicode Strings
+- [x] Floats
+- [x] Integers
 - [x] Longs
 - [x] Longs over 64 bits
-- [X] Objects
-- [X] Arrays
+- [x] Objects
+- [x] Arrays
 - [ ] Tuples
 - [ ] PIDs
 - [ ] Ports

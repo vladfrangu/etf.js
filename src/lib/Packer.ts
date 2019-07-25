@@ -1,5 +1,6 @@
 import { Tokens, ETF_VERSION } from './util/Constants';
 import { AtomClass } from './structures/Atom';
+import { TE } from './util/Util';
 
 const float64Array = new Float64Array(1);
 const uInt8Float64Array = new Uint8Array(float64Array.buffer);
@@ -49,9 +50,9 @@ class Packer {
 
 	}
 
-	private writeAtom(atom: any) {
+	private writeAtom(atom: string) {
+		if (atom.length > 255) throw new Error('Atom is too large!');
 		const encoded = Packer._textEncoder.encode(atom);
-		if (encoded.length > 0xFFFF) throw new Error('Atom is too large!');
 		const isAscii = encoded.every(byte => byte < 0x80);
 		if (isAscii) {
 			this.write8(Tokens.ATOM_EXT);
@@ -114,9 +115,7 @@ class Packer {
 	private writeArray(array: unknown[] | Set<unknown>) {
 		const length = Array.isArray(array) ? array.length : array.size;
 
-		if (length === 0) {
-			return this.writeNil();
-		}
+		if (length === 0) return this.writeNil();
 
 		this.write8(Tokens.LIST_EXT);
 		this.write32(length);
@@ -133,9 +132,10 @@ class Packer {
 		this.write32(entries.length);
 
 		for (const [key, value] of entries) {
-			const atomName = /Atom\((?<atomName>.+)\)/.exec(key);
+			// Maps can have full structures as the key
+			const atomName = key instanceof AtomClass ? key.name : /Atom\((?<atomName>.+)\)/.exec(key.toString());
 			if (atomName) {
-				this.writeAtom(atomName.groups!.atomName);
+				this.writeAtom(typeof atomName === 'string' ? atomName : atomName.groups!.atomName);
 			} else {
 				this.pack(key);
 			}
@@ -199,7 +199,7 @@ class Packer {
 		}
 	}
 
-	private static _textEncoder = new TextEncoder();
+	private static _textEncoder = new TE();
 
 }
 

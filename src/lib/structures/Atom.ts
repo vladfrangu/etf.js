@@ -6,6 +6,8 @@ class Atom {
 	public name: string;
 
 	public constructor(name: string) {
+		if (typeof name !== 'string') throw new TypeError('Atom name must be a string.');
+		if (name.length > 255) throw new RangeError('Atom name must not be longer than 255 characters.');
 		this.name = name;
 	}
 

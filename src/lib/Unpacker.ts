@@ -2,6 +2,7 @@ import { Tokens, ETF_VERSION } from './util/Constants';
 import { PortData, NewReferenceData, PidData, ExportData, FunData, NewFunData, Atom } from './util/Types';
 import * as pako from 'pako';
 import AtomConstructor from './structures/Atom';
+import { TD } from './util/Util';
 
 const float64Array = new Float64Array(1);
 const uInt8Float64Array = new Uint8Array(float64Array.buffer);
@@ -35,7 +36,7 @@ export class Unpacker {
 			case Tokens.SMALL_INTEGER_EXT: return this.readSmallIntegerExt();
 			case Tokens.INTEGER_EXT: return this.readIntegerExt();
 			case Tokens.FLOAT_EXT: return this.readFloatExt();
-			// TODO: ATOM_EXT
+			case Tokens.ATOM_EXT: return this.readAtomExt();
 			// TODO: REFERENCE_EXT
 			case Tokens.PORT_EXT: return this.readPortExt();
 			case Tokens.PID_EXT: return this.readPidExt();
@@ -101,6 +102,22 @@ export class Unpacker {
 	 */
 	private readFloatExt() {
 		return Number(this.readString(31));
+	}
+
+	/**
+	 * An atom is stored with a 2 byte unsigned length in big-endian order,
+	 * followed by Len numbers of 8-bit Latin-1 characters that forms the AtomName.
+	 * The maximum allowed value for Len is 255.
+	 * @structure
+	 * | 1   | 2   | Len      |
+	 * | 100 | Len | AtomName |
+	 * @internal
+	 * @deprecated
+	 */
+	private readAtomExt() {
+		const len = this.read16();
+		const atom = this.readString(len);
+		return this.parseAtom(atom);
 	}
 
 	/**
@@ -279,10 +296,7 @@ export class Unpacker {
 	 */
 	private readBinaryExt() {
 		const length = this.read32();
-		this.ensureBytes(length);
-		const buffer = this._buffer!.subarray(this.offset, length);
-		this.offset += length;
-		return buffer;
+		return this.readString(length);
 	}
 
 	/**
@@ -559,12 +573,8 @@ export class Unpacker {
 		return sign === 0 ? value : -value;
 	}
 
-	private parseAtom(atom?: unknown) {
-		if (!atom) {
-			return undefined;
-		}
-
-		if (atom === 'nil' || atom === 'null') {
+	private parseAtom(atom?: string) {
+		if (!atom || atom === 'nil' || atom === 'null') {
 			return null;
 		}
 
@@ -576,7 +586,7 @@ export class Unpacker {
 			return false;
 		}
 
-		return AtomConstructor(atom as string);
+		return AtomConstructor(atom);
 	}
 
 	private readString(length: number) {
@@ -635,6 +645,6 @@ export class Unpacker {
 		}
 	}
 
-	private static _textDecoder = new TextDecoder('utf8');
+	private static _textDecoder = new TD('utf8');
 
 }
