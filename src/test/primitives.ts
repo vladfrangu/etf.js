@@ -26,10 +26,15 @@ test('null/undefined primitives', t => {
 });
 
 test('number (float and non-float)', t => {
-	t.plan(2);
+	t.plan(4);
 
-	const number = 21;
+	const smallNumber = -64;
+	const number = 128;
 	const float = 4.2;
+
+	const unpackedSmallNumber = unpack(pack(smallNumber)) as number;
+
+	t.equal(unpackedSmallNumber, smallNumber, 'small number primitive was unpacked correctly');
 
 	const unpackedNumber = unpack(pack(number)) as number;
 
@@ -38,6 +43,8 @@ test('number (float and non-float)', t => {
 	const unpackedFloat = unpack(pack(float)) as number;
 
 	t.equal(unpackedFloat, float, 'number primitive (float) was unpacked correctly');
+
+	t.throws(() => pack(Infinity), 'cannot pack non-finite numbers');
 });
 
 test('bigint', t => {
@@ -75,9 +82,15 @@ test('bigint (64bit integer limit :: signed/unsigned)', t => {
 
 	t.equal(unpackedSigned, signed, 'signed bigint primitive was unpacked correctly');
 
-	const unsigned = 18446744073709551615n;
+	const unsigned = -18446744073709551615n;
 
 	const unpackedUnsigned = unpack(pack(unsigned)) as bigint;
 
-	t.equal(unpackedUnsigned, unsigned, 'unsigned bigint primitive was unpacked correctly');
+	t.equal(unpackedUnsigned, unsigned, 'unsigned negative bigint primitive was unpacked correctly');
+});
+
+test('Cannot serialize Symbols', t => {
+	t.plan(1);
+
+	t.throws(() => pack(Symbol('hello_world')));
 });
