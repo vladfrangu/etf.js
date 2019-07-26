@@ -13,7 +13,7 @@
       <img src="https://dev.azure.com/vladfrangu/Public/_apis/build/status/vladfrangu.etf.js?branchName=master" alt="Build status" />
     </a>
     <a href="https://dev.azure.com/vladfrangu/Public/_build/latest?definitionId=7&branchName=master">
-      <img src="https://img.shields.io/azure-devops/coverage/vladfrangu/Public/1/master.svg" alt="Azure DevOps coverage">
+      <img src="https://img.shields.io/azure-devops/coverage/vladfrangu/Public/7/master.svg" alt="Azure DevOps coverage">
     </a>
     <a href="https://lgtm.com/projects/g/vladfrangu/etf.js/alerts/">
       <img src="https://img.shields.io/lgtm/alerts/g/vladfrangu/etf.js.svg?logo=lgtm&logoWidth=18" alt="Total alerts">
