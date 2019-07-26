@@ -89,5 +89,5 @@ Authored and maintained by vladfrangu.
 > Github [vladfrangu][github-vlad] - Twitter [@KingDGrizzle](https://twitter.com/KingDGrizzle)
 
 [etf]: http://erlang.org/doc/apps/erts/erl_ext_dist.html
-[binarytf]: https://github.com/kyranet/binarytf
+[binarytf]: https://github.com/binarytf/binarytf
 [github-vlad]: (https://github.com/vladfrangu)
