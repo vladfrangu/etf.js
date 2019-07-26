@@ -3,9 +3,13 @@
   "all": true,
   "check-coverage": true,
   "watermarks": {
-    "lines": [50, 75],
-    "functions": [50, 75],
-    "branches": [50, 75],
-    "statements": [50, 75]
-  }
+    "lines": [85, 95],
+    "functions": [85, 95],
+    "branches": [85, 95],
+    "statements": [85, 95]
+  },
+  "branches": 75,
+  "lines": 75,
+  "functions": 75,
+  "statements": 75
 }
