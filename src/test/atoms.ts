@@ -17,6 +17,12 @@ test('Atom throws if input is longer than 255 chars', t => {
 	t.throws(() => Atom('*'.repeat(256)));
 });
 
+test("Atom's valueof() is the same as the name", t => {
+	t.plan(1);
+
+	t.equal(helloWorldAtom.valueOf(), helloWorldAtom.name);
+});
+
 test('Packing and unpacking Atom keeps the same content', t => {
 	t.plan(2);
 	const packed = pack(helloWorldAtom);
