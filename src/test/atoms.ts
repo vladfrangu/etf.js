@@ -32,6 +32,14 @@ test('Packing and unpacking Atom keeps the same content', t => {
 	t.equal(`${unpacked}`, 'Atom(hello_world)', 'unpacked instance has the same name as the original instance');
 });
 
+test('Packing Atom with length over 255 throws error', t => {
+	t.plan(1);
+
+	const fakeAtomName = `Atom(${'*'.repeat(256)})`;
+
+	t.throws(() => pack({ [fakeAtomName]: true }));
+});
+
 test('Atom works as object key', t => {
 	t.plan(2);
 
