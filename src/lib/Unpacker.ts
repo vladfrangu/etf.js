@@ -90,7 +90,7 @@ export class Unpacker {
 	 * @internal
 	 */
 	private readIntegerExt() {
-		return this.read32();
+		return this.readSigned32();
 	}
 
 	/**
@@ -637,6 +637,14 @@ export class Unpacker {
 			(this._buffer![this.offset++] * (2 ** 16)) +
 			(this._buffer![this.offset++] * (2 ** 8)) +
 			this._buffer![this.offset++];
+	}
+
+	private readSigned32() {
+		this.ensureBytes(4);
+		return (this._buffer![this.offset++] << 24) +
+      (this._buffer![this.offset++] * (2 ** 16)) +
+      (this._buffer![this.offset++] * (2 ** 8)) +
+      this._buffer![this.offset++];
 	}
 
 	private readF64() {

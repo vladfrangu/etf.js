@@ -70,7 +70,7 @@ class Packer {
 	private writeNumber(value: number) {
 		if (!Number.isFinite(value)) throw new Error(`"${value}" is not a finite number.`);
 		if (value === (value | 0)) {
-			if (value > -128 && value < 128) {
+			if (value >= 0 && value <= 255) {
 				this.write8(Tokens.SMALL_INTEGER_EXT);
 				this.write8(value);
 			} else {

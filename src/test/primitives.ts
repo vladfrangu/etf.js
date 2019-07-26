@@ -26,15 +26,17 @@ test('null/undefined primitives', t => {
 });
 
 test('number (float and non-float)', t => {
-	t.plan(4);
+	t.plan(6);
 
-	const smallNumber = -64;
-	const number = 128;
+	const number = -64;
+	const smallNumber = 128;
 	const float = 4.2;
+	const big32Number = (2 ** 31) - 1;
+	const big64Number = -Number.MAX_SAFE_INTEGER;
 
 	const unpackedSmallNumber = unpack(pack(smallNumber)) as number;
 
-	t.equal(unpackedSmallNumber, smallNumber, 'small number primitive was unpacked correctly');
+	t.equal(unpackedSmallNumber, smallNumber, 'small number (0..255) primitive was unpacked correctly');
 
 	const unpackedNumber = unpack(pack(number)) as number;
 
@@ -43,6 +45,14 @@ test('number (float and non-float)', t => {
 	const unpackedFloat = unpack(pack(float)) as number;
 
 	t.equal(unpackedFloat, float, 'number primitive (float) was unpacked correctly');
+
+	const unpackedBig32Number = unpack(pack(big32Number)) as number;
+
+	t.equal(unpackedBig32Number, big32Number, '32-bit integer limit was unpacked correctly');
+
+	const unpackedBig64Number = unpack(pack(big64Number)) as number;
+
+	t.equal(unpackedBig64Number, big64Number, 'negative max safe integer in JS was unpacked correctly');
 
 	t.throws(() => pack(Infinity), 'cannot pack non-finite numbers');
 });
