@@ -86,8 +86,8 @@ Plus added support for Maps (will be converted into Objects) and Sets (will be c
 **etf.js** © [vladfrangu][githubvlad], released under the
 [MIT](https://github.com/vladfrangu/etf.js/blob/master/LICENSE) License.
 Authored and maintained by vladfrangu.
-> Github [vladfrangu][github-vlad] - Twitter [@KingDGrizzle](https://twitter.com/KingDGrizzle)
+> Github [vladfrangu][githubvlad] - Twitter [@KingDGrizzle](https://twitter.com/KingDGrizzle)
 
 [etf]: http://erlang.org/doc/apps/erts/erl_ext_dist.html
 [binarytf]: https://github.com/binarytf/binarytf
-[githubvlad]: (https://github.com/vladfrangu)
+[githubvlad]: https://github.com/vladfrangu
