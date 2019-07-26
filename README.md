@@ -52,7 +52,7 @@ console.log(deserialized); // { hello: 'world' }
 - [x] Booleans ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
 - [x] Strings ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
 - [x] Atoms ([Atom Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/atoms.ts))
-- [x] Unicode Strings
+- [x] Unicode Strings ([String Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/strings.ts))
 - [x] Floats ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
 - [x] Integers ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))
 - [x] Longs ([Primitive Tests](https://github.com/vladfrangu/etf.js/blob/master/src/test/primitives.ts))

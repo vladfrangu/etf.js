@@ -37,7 +37,7 @@ export class Unpacker {
 			case Tokens.INTEGER_EXT: return this.readIntegerExt();
 			case Tokens.FLOAT_EXT: return this.readFloatExt();
 			case Tokens.ATOM_EXT: return this.readAtomExt();
-			// TODO: REFERENCE_EXT
+			case Tokens.REFERENCE_EXT: throw new Error('Decrecated: REFERENCE_EXT are not supported!');
 			case Tokens.PORT_EXT: return this.readPortExt();
 			case Tokens.PID_EXT: return this.readPidExt();
 			case Tokens.SMALL_TUPLE_EXT: return this.readSmallTupleExt();
@@ -51,7 +51,7 @@ export class Unpacker {
 			case Tokens.NEW_FUN_EXT: return this.readNewFunExt();
 			case Tokens.EXPORT_EXT: return this.readExportExt();
 			case Tokens.NEW_REFERENCE_EXT: return this.readNewReferenceExt();
-			// TODO: SMALL_ATOM_EXT
+			case Tokens.SMALL_ATOM_EXT: return this.readSmallAtomExt();
 			case Tokens.MAP_EXT: return this.readMapExt();
 			case Tokens.FUN_EXT: return this.readFunExt();
 			case Tokens.ATOM_UTF8_EXT: return this.readAtomUtf8Ext();
@@ -347,6 +347,19 @@ export class Unpacker {
 		for (let i = 0; i < len; i++) data.id.push(this.read32());
 
 		return data;
+	}
+
+	/**
+	 * An atom is stored with a 1 byte unsigned length,
+	 * followed by Len numbers of 8-bit Latin-1 characters that forms the AtomName.
+	 * @structure
+	 * | 1   | 1   | Len      |
+	 * | 115 | Len | AtomName |
+	 */
+	private readSmallAtomExt() {
+		const len = this.read8();
+		const atom = this.readString(len);
+		return this.parseAtom(atom);
 	}
 
 	/**

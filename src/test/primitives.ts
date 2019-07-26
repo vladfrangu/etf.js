@@ -6,11 +6,11 @@ test('true/false primitives', t => {
 
 	const unpackedTrue = unpack(pack(true)) as true;
 
-	t.true(unpackedTrue, 'true primitive was not unpacked correctly');
+	t.true(unpackedTrue, 'true primitive was unpacked correctly');
 
 	const unpackedFalse = unpack(pack(false)) as false;
 
-	t.false(unpackedFalse, 'false primitive was not unpacked correctly');
+	t.false(unpackedFalse, 'false primitive was unpacked correctly');
 });
 
 test('null/undefined primitives', t => {
@@ -18,11 +18,11 @@ test('null/undefined primitives', t => {
 
 	const unpackedNull = unpack(pack(null)) as null;
 
-	t.equal(unpackedNull, null, 'null primitive was not unpacked correctly');
+	t.equal(unpackedNull, null, 'null primitive was unpacked correctly');
 
 	const unpackedUndefined = unpack(pack(undefined)) as null;
 
-	t.equal(unpackedUndefined, null, 'undefined primitive was not unpacked correctly to null');
+	t.equal(unpackedUndefined, null, 'undefined primitive was unpacked correctly to null');
 });
 
 test('number (float and non-float)', t => {
@@ -33,11 +33,11 @@ test('number (float and non-float)', t => {
 
 	const unpackedNumber = unpack(pack(number)) as number;
 
-	t.equal(unpackedNumber, number, 'number primitive was not unpacked correctly');
+	t.equal(unpackedNumber, number, 'number primitive was unpacked correctly');
 
 	const unpackedFloat = unpack(pack(float)) as number;
 
-	t.equal(unpackedFloat, float, 'number primitive (float) was not unpacked correctly');
+	t.equal(unpackedFloat, float, 'number primitive (float) was unpacked correctly');
 });
 
 test('bigint', t => {
@@ -47,7 +47,7 @@ test('bigint', t => {
 
 	const unpackedNumber = unpack(pack(number)) as bigint;
 
-	t.equal(unpackedNumber, number, 'bigint primitive was not unpacked correctly');
+	t.equal(unpackedNumber, number, 'bigint primitive was unpacked correctly');
 });
 
 test('bigint (32bit integer limit :: signed/unsigned)', t => {
@@ -57,13 +57,13 @@ test('bigint (32bit integer limit :: signed/unsigned)', t => {
 
 	const unpackedSigned = unpack(pack(signed)) as bigint;
 
-	t.equal(unpackedSigned, signed, 'signed bigint primitive was not unpacked correctly');
+	t.equal(unpackedSigned, signed, 'signed bigint primitive was unpacked correctly');
 
 	const unsigned = 4294967295n;
 
 	const unpackedUnsigned = unpack(pack(unsigned)) as bigint;
 
-	t.equal(unpackedUnsigned, unsigned, 'unsigned bigint primitive was not unpacked correctly');
+	t.equal(unpackedUnsigned, unsigned, 'unsigned bigint primitive was unpacked correctly');
 });
 
 test('bigint (64bit integer limit :: signed/unsigned)', t => {
@@ -73,11 +73,11 @@ test('bigint (64bit integer limit :: signed/unsigned)', t => {
 
 	const unpackedSigned = unpack(pack(signed)) as bigint;
 
-	t.equal(unpackedSigned, signed, 'signed bigint primitive was not unpacked correctly');
+	t.equal(unpackedSigned, signed, 'signed bigint primitive was unpacked correctly');
 
 	const unsigned = 18446744073709551615n;
 
 	const unpackedUnsigned = unpack(pack(unsigned)) as bigint;
 
-	t.equal(unpackedUnsigned, unsigned, 'unsigned bigint primitive was not unpacked correctly');
+	t.equal(unpackedUnsigned, unsigned, 'unsigned bigint primitive was unpacked correctly');
 });
