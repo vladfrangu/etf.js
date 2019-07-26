@@ -1,6 +1,5 @@
 import * as test from 'tape';
 import { pack, unpack, Atom } from '../index';
-import { AtomClass } from '../lib/structures/Atom';
 
 const emojiString = '👀❤️👐';
 
@@ -26,9 +25,9 @@ test('UTF-8 strings', t => {
 
 	t.equal(unpackedEmoji, emojiString, 'emoji string was unpacked properly');
 
-	const unpackedAtom = unpack(pack(emojiAtom)) as AtomClass;
+	const unpackedAtom = unpack(pack(emojiAtom)) as string;
 
-	t.equal(unpackedAtom.name, emojiAtom.name, 'Atom emoji string was unpacked properly');
+	t.equal(unpackedAtom, emojiAtom.name, 'Atom name as emoji string was unpacked properly');
 });
 
 test('Zalgo', t => {
@@ -40,7 +39,7 @@ test('Zalgo', t => {
 
 	t.equal(unpackedZalgo, zalgoString, 'zalgo text is unpacked correctly');
 
-	const unpackedAtom = unpack(pack(zalgoAtom)) as AtomClass;
+	const unpackedAtom = unpack(pack(zalgoAtom)) as string;
 
-	t.equal(unpackedAtom.name, zalgoAtom.name, 'Atom zalgo string was unpacked properly');
+	t.equal(unpackedAtom, zalgoAtom.name, 'Atom name as zalgo string was unpacked properly');
 });

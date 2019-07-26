@@ -23,13 +23,12 @@ test("Atom's valueof() is the same as the name", t => {
 	t.equal(helloWorldAtom.valueOf(), helloWorldAtom.name);
 });
 
-test('Packing and unpacking Atom keeps the same content', t => {
-	t.plan(2);
+test('Packing and unpacking Atom keeps the same name', t => {
+	t.plan(1);
 	const packed = pack(helloWorldAtom);
-	const unpacked = unpack(packed);
+	const unpacked = unpack(packed) as string;
 
-	t.assert(unpacked instanceof AtomClass, 'unpacked is an Atom class');
-	t.equal(`${unpacked}`, 'Atom(hello_world)', 'unpacked instance has the same name as the original instance');
+	t.equal(unpacked, helloWorldAtom.name, 'unpacked instance has the same Atom name as the original instance');
 });
 
 test('Packing Atom with length over 255 throws error', t => {
@@ -46,11 +45,11 @@ test('Atom works as object key', t => {
 	// @ts-ignore Complains that it isn't a string, but it gets stringified by JS. Use `toString()` when you use it as an object key
 	const obj = { [helloWorldAtom]: true };
 
-	t.assert('Atom(hello_world)' in obj, 'the Atom name is in the object');
+	t.assert('Atom(hello_world)' in obj, 'the Atom name (wrapped in the Atom() constructor) is in the object');
 
 	const unpacked = unpack(pack(obj)) as Record<string, boolean>;
 
-	t.assert('Atom(hello_world)' in unpacked, 'the Atom name is in the unpacked object');
+	t.assert('hello_world' in unpacked, 'the Atom name is in the unpacked object');
 });
 
 test('Atom works as map key', t => {
@@ -60,29 +59,27 @@ test('Atom works as map key', t => {
 		[helloWorldAtom, true]
 	]);
 
-	t.assert(map.has(helloWorldAtom), 'the Atom name is in the map');
+	t.assert(map.has(helloWorldAtom), 'the Atom name (wrapped in the Atom() constructor) is in the map');
 
 	const unpacked = unpack(pack(map)) as Record<string, boolean>;
 
-	t.assert('Atom(hello_world)' in unpacked, 'the Atom name is in the unpacked map (which is an object when unpacked)');
+	t.assert('hello_world' in unpacked, 'the Atom name is in the unpacked map (which is an object when unpacked)');
 });
 
 test('Atom works as object value', t => {
-	t.plan(3);
+	t.plan(2);
 
 	const obj = { helloWorld: helloWorldAtom };
 
 	t.assert(obj.helloWorld instanceof AtomClass, 'object value is an atom');
 
-	const unpacked = unpack(pack(obj)) as Record<string, AtomClass>;
+	const unpacked = unpack(pack(obj)) as Record<string, string>;
 
-	t.assert(unpacked.helloWorld instanceof AtomClass, 'unpacked object value is an Atom');
-
-	t.same(unpacked.helloWorld.name, helloWorldAtom.name, 'Atoms have the same name after unpacking');
+	t.same(unpacked.helloWorld, helloWorldAtom.name, 'Atoms have the same name after unpacking');
 });
 
 test('Atom works as map value', t => {
-	t.plan(3);
+	t.plan(2);
 
 	const map = new Map([
 		['helloWorld', helloWorldAtom]
@@ -92,22 +89,19 @@ test('Atom works as map value', t => {
 
 	t.assert(entry instanceof AtomClass, 'object value is an atom');
 
-	const unpacked = unpack(pack(map)) as Record<string, AtomClass>;
+	const unpacked = unpack(pack(map)) as Record<string, string>;
 
-	t.assert(unpacked.helloWorld instanceof AtomClass, 'unpacked object value is an Atom');
-
-	t.same(unpacked.helloWorld.name, helloWorldAtom.name, 'Atoms have the same name after unpacking');
+	t.same(unpacked.helloWorld, helloWorldAtom.name, 'Atoms have the same name after unpacking');
 });
 
 test('Atoms in arrays', t => {
-	t.plan(2);
+	t.plan(1);
 
 	const array = Array.from({ length: 3 }, () => helloWorldAtom);
 
-	const unpacked = unpack(pack(array)) as AtomClass[];
+	const unpacked = unpack(pack(array)) as string[];
 
-	t.equal(unpacked.length, array.length, 'unpacked the same number of Atoms');
-	t.true(unpacked.every(value => value instanceof AtomClass), 'all items in the unpacked array are instances of AtomClass');
+	t.true(unpacked.every(value => value === helloWorldAtom.name), 'all items in the unpacked array are strings of the Atom name');
 });
 
 test('Booleans are not Atoms after unpacking', t => {

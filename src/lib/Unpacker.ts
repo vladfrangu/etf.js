@@ -1,7 +1,6 @@
 import { Tokens, ETF_VERSION } from './util/Constants';
 import { PortData, NewReferenceData, PidData, ExportData, FunData, NewFunData, Atom } from './util/Types';
 import * as pako from 'pako';
-import AtomConstructor from './structures/Atom';
 import { TD } from './util/Util';
 
 const float64Array = new Float64Array(1);
@@ -599,7 +598,7 @@ export class Unpacker {
 			return false;
 		}
 
-		return AtomConstructor(atom);
+		return atom;
 	}
 
 	private readString(length: number) {
