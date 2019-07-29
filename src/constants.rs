@@ -31,3 +31,5 @@ pub const SMALL_ATOM_UTF8_EXT: u8 = 119;
 pub const COMPRESSED: u8 = 80;
 
 pub const ETF_VERSION: u8 = 131;
+
+pub const NIL_ATOM: &str = "nil";
