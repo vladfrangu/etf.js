@@ -67,11 +67,14 @@ impl Packer {
 	}
 
 	fn write_atom(&mut self, value: &str) -> Result<(), String> {
-		if value.len() > 255 {
+		let len = value.len();
+
+		if len > 255 {
 			return Err(format!("\"{}\" is too long of an Atom name", value));
 		}
 
-		let is_ascii = value.as_bytes().iter().all(|&c| c < 0x80);
+		let bytes = value.as_bytes();
+		let is_ascii = bytes.iter().all(|&c| c < 0x80);
 
 		if is_ascii {
 			self.write_8(ATOM_EXT);
@@ -79,8 +82,8 @@ impl Packer {
 			self.write_8(ATOM_UTF8_EXT);
 		}
 
-		self.write_16(value.len() as u16);
-		self.write_all(value.as_bytes());
+		self.write_16(len as u16);
+		self.write_all(bytes);
 
 		Ok(())
 	}
@@ -123,9 +126,7 @@ impl Packer {
 	}
 
 	fn write_all(&mut self, bytes: &[u8]) {
-		for byte in bytes.iter() {
-			self.write_8(*byte);
-		}
+		self.buffer.extend_from_slice(bytes);
 	}
 
 	fn write_8(&mut self, value: u8) {
@@ -134,15 +135,11 @@ impl Packer {
 
 	fn write_16(&mut self, value: u16) {
 		let bytes = value.to_be_bytes();
-		for byte in bytes.iter() {
-			self.write_8(*byte);
-		}
+		self.buffer.extend_from_slice(&bytes);
 	}
 
 	fn write_32(&mut self, value: u32) {
 		let bytes = value.to_be_bytes();
-		for byte in bytes.iter() {
-			self.write_8(*byte);
-		}
+		self.buffer.extend_from_slice(&bytes);
 	}
 }
