@@ -4,7 +4,6 @@ extern crate byteorder;
 
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::throw_str;
-use js_sys::Error;
 use byteorder::{ByteOrder,BigEndian,LittleEndian};
 
 use crate::constants::*;
@@ -39,14 +38,14 @@ impl Packer {
 
 	fn pack(&mut self, value: &JsValue) {
 		if value.is_null() || value.is_undefined() {
-			return self.write_atom(NIL_ATOM).expect_throw("Atom is too large");
+			return self.write_atom(&"nil").unwrap_throw();
 		}
 
 		if let Some(boolean) = value.as_bool() {
-			if boolean {
-				return self.write_atom(&"true").unwrap_throw();
+			return if boolean {
+				self.write_atom(&"true").unwrap_throw()
 			} else {
-				return self.write_atom(&"false").unwrap_throw();
+				self.write_atom(&"false").unwrap_throw()
 			}
 		}
 
@@ -62,12 +61,14 @@ impl Packer {
 			return;
 		}
 
+		// TODO: Atom classes, Arrays/Set, Map/Objects
+
 		throw_str(&"The primitive value you passed in cannot be packed");
 	}
 
-	fn write_atom(&mut self, value: &str) -> Result<(), Error> {
+	fn write_atom(&mut self, value: &str) -> Result<(), String> {
 		if value.len() > 255 {
-			return Err(Error::new(""));
+			return Err(format!("\"{}\" is too long of an Atom name", value));
 		}
 
 		let is_ascii = value.as_bytes().iter().all(|&c| c < 0x80);
@@ -85,6 +86,10 @@ impl Packer {
 	}
 
 	fn write_string(&mut self, value: String) {
+		if value.len() == 0 {
+			self.write_8(NIL_EXT);
+			return;
+		}
 		self.write_8(STRING_EXT);
 		self.write_32(value.len() as u32);
 		self.write_all(value.as_bytes());
