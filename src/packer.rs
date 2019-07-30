@@ -1,14 +1,16 @@
 extern crate wasm_bindgen;
 extern crate js_sys;
 extern crate byteorder;
+extern crate regex;
 
+use lazy_static;
 use std::convert::TryFrom;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::throw_str;
 use wasm_bindgen::JsCast;
-use js_sys::{Array,Iterator,Map,Set,Object,RegExp};
+use js_sys::{Array,Iterator,Map,Set,Object};
 use byteorder::{ByteOrder,BigEndian,LittleEndian};
-
+use regex::Regex;
 use crate::constants::*;
 
 #[wasm_bindgen(raw_module = "../dist/structures/AtomClass", js_namespace = AtomClass)]
@@ -23,6 +25,10 @@ extern {
 
 	#[wasm_bindgen(method)]
 	fn valueOf(this: &AtomClass) -> String;
+}
+
+lazy_static! {
+	static ref ATOM_REGEXP: Regex = Regex::new(r"Atom\((.+)\)").unwrap();
 }
 
 #[wasm_bindgen]
@@ -189,30 +195,17 @@ impl Packer {
 				let kv = arr_item.unwrap_throw();
 
 				if let Some(key) = kv.as_string() {
-					match RegExp::new(&"Atom\\((.+)\\)", &"").exec(&key) {
-						Some(exec) => {
-							let atom_name = exec.values().into_iter().nth(1).unwrap_throw().unwrap_throw();
-							self.pack(&atom_name);
-						},
-						_ => self.pack(&kv)
+					if let Some(exec) = ATOM_REGEXP.captures(&key) {
+						let atom_name = exec.get(1).unwrap_throw().as_str();
+						return self.write_atom(atom_name).unwrap_throw();
 					}
-					return;
-				}
-
-				if kv.is_object() {
-					match AtomClass::try_from(kv.clone()) {
-						Ok(atom_cls) => {
-							match RegExp::new(&"Atom\\((.+)\\)", &"").exec(&atom_cls.toString()) {
-								Some(exec) => {
-									let atom_name = exec.values().into_iter().nth(1).unwrap_throw().unwrap_throw();
-									self.pack(&atom_name);
-								},
-								_ => self.pack(&kv)
-							}
-						},
-						_ => self.pack(&kv)
+				} else if kv.is_object() {
+					if let Ok(atom_cls) = AtomClass::try_from(kv.clone()) {
+						if let Some(exec) = ATOM_REGEXP.captures(&atom_cls.toString()) {
+							let atom_name = exec.get(1).unwrap_throw().as_str();
+							return self.write_atom(atom_name).unwrap_throw();
+						}
 					}
-					return;
 				}
 
 				self.pack(&kv);
