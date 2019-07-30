@@ -3,7 +3,7 @@ import Atom from './structures/AtomClass';
 
 export const pack = (value: any) => {
 	try {
-		return nativePack(value);
+		return new Uint8Array(nativePack(value));
 	} catch (err) {
 		if (Error.captureStackTrace) Error.captureStackTrace(err);
 		throw err;
@@ -12,7 +12,16 @@ export const pack = (value: any) => {
 
 export { Atom };
 
-console.log(pack(123n));
+console.log(pack({
+	'Atom(hi mommy)': true,
+	'hi': false
+}));
+
+// @ts-ignore
+console.log(pack(new Map([
+	[Atom('hi'), true],
+	['tits', false]
+])));
 // console.log(pack(['Hello!']));
 // console.log(pack(Symbol('Oh la la!')));
 // console.log(pack(42069n));

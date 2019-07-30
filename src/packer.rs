@@ -190,7 +190,7 @@ impl Packer {
 
 		iterator.into_iter().for_each(|item| {
 			let arr = Array::from(&item.unwrap_throw());
-			console_log(&format!("{:?}", arr));
+
 			arr.values().into_iter().for_each(|arr_item| {
 				let kv = arr_item.unwrap_throw();
 
