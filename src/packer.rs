@@ -4,9 +4,25 @@ extern crate byteorder;
 
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::throw_str;
+use wasm_bindgen::JsCast;
+use js_sys::{Array,Iterator,Map,Set};
 use byteorder::{ByteOrder,BigEndian,LittleEndian};
 
 use crate::constants::*;
+
+#[wasm_bindgen(raw_module = "../dist/structures/AtomClass", js_namespace = AtomClass)]
+extern {
+	pub type AtomClass;
+
+	#[wasm_bindgen(constructor)]
+	fn new(arg: String) -> AtomClass;
+
+	#[wasm_bindgen(method)]
+	fn toString(this: &AtomClass) -> String;
+
+	#[wasm_bindgen(method)]
+	fn valueOf(this: &AtomClass) -> String;
+}
 
 #[wasm_bindgen]
 extern {
@@ -61,7 +77,24 @@ impl Packer {
 			return;
 		}
 
-		// TODO: Atom classes, Arrays/Set, Map/Objects
+		if value.is_object() {
+			if value.is_instance_of::<AtomClass>() {
+				let atom = AtomClass::from(value.clone());
+				return self.write_atom(&atom.valueOf()).unwrap_throw();
+			}
+
+			if Array::is_array(value) {
+				let arr = Array::from(&value);
+				return self.write_list(arr.length(), &arr.values());
+			}
+
+			if value.is_instance_of::<Set>() {
+				let set = Set::from(value.clone());
+				return self.write_list(set.size(), &set.values());
+			}
+		}
+
+		// TODO: Arrays/Set, Map/Objects
 
 		throw_str(&"The primitive value you passed in cannot be packed");
 	}
@@ -93,12 +126,12 @@ impl Packer {
 			self.write_8(NIL_EXT);
 			return;
 		}
-		self.write_8(STRING_EXT);
+		self.write_8(BINARY_EXT);
 		self.write_32(value.len() as u32);
 		self.write_all(value.as_bytes());
 	}
 
-	fn write_number(&mut self, value: f64) -> Result<bool, String> {
+	fn write_number(&mut self, value: f64) -> Result<(), String> {
 		if !value.is_finite() {
 			return Err(format!("\"{}\" is not a finite number", value.to_string()));
 		}
@@ -122,7 +155,20 @@ impl Packer {
 			self.write_all(&bytes);
 		}
 
-		Ok(true)
+		Ok(())
+	}
+
+	fn write_list(&mut self, len: u32, iterator: &Iterator) {
+		if len == 0 {
+			return self.write_8(NIL_EXT);
+		}
+
+		self.write_8(LIST_EXT);
+		self.write_32(len);
+
+		iterator.into_iter().for_each(|item| self.pack(&item.unwrap_throw()) );
+
+		self.write_8(NIL_EXT);
 	}
 
 	fn write_all(&mut self, bytes: &[u8]) {

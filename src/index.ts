@@ -1,4 +1,5 @@
 import { native_pack as nativePack } from '../wasm/etfjs';
+import Atom from './structures/AtomClass';
 
 export const pack = (value: any) => {
 	try {
@@ -8,6 +9,10 @@ export const pack = (value: any) => {
 		throw err;
 	}
 };
+
+export { Atom };
+
+console.log(pack([1, "true"]));
 
 // console.log(pack(['Hello!']));
 // console.log(pack(Symbol('Oh la la!')));
