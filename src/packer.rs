@@ -2,10 +2,11 @@ extern crate wasm_bindgen;
 extern crate js_sys;
 extern crate byteorder;
 
+use std::convert::TryFrom;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::throw_str;
 use wasm_bindgen::JsCast;
-use js_sys::{Array,Iterator,Map,Set};
+use js_sys::{Array,Iterator,Map,Set,Object,RegExp};
 use byteorder::{ByteOrder,BigEndian,LittleEndian};
 
 use crate::constants::*;
@@ -92,9 +93,15 @@ impl Packer {
 				let set = Set::from(value.clone());
 				return self.write_list(set.size(), &set.values());
 			}
-		}
 
-		// TODO: Arrays/Set, Map/Objects
+			if value.is_instance_of::<Map>() {
+				let map = Map::from(value.clone());
+				return self.write_object(map.size(), &map.entries());
+			}
+
+			let entries = Object::entries(&Object::from(value.clone()));
+			return self.write_object(entries.length(), &entries.values());
+		}
 
 		throw_str(&"The primitive value you passed in cannot be packed");
 	}
@@ -169,6 +176,48 @@ impl Packer {
 		iterator.into_iter().for_each(|item| self.pack(&item.unwrap_throw()) );
 
 		self.write_8(NIL_EXT);
+	}
+
+	fn write_object(&mut self, len: u32, iterator: &Iterator) {
+		self.write_8(MAP_EXT);
+		self.write_32(len);
+
+		iterator.into_iter().for_each(|item| {
+			let arr = Array::from(&item.unwrap_throw());
+			console_log(&format!("{:?}", arr));
+			arr.values().into_iter().for_each(|arr_item| {
+				let kv = arr_item.unwrap_throw();
+
+				if let Some(key) = kv.as_string() {
+					match RegExp::new(&"Atom\\((.+)\\)", &"").exec(&key) {
+						Some(exec) => {
+							let atom_name = exec.values().into_iter().nth(1).unwrap_throw().unwrap_throw();
+							self.pack(&atom_name);
+						},
+						_ => self.pack(&kv)
+					}
+					return;
+				}
+
+				if kv.is_object() {
+					match AtomClass::try_from(kv.clone()) {
+						Ok(atom_cls) => {
+							match RegExp::new(&"Atom\\((.+)\\)", &"").exec(&atom_cls.toString()) {
+								Some(exec) => {
+									let atom_name = exec.values().into_iter().nth(1).unwrap_throw().unwrap_throw();
+									self.pack(&atom_name);
+								},
+								_ => self.pack(&kv)
+							}
+						},
+						_ => self.pack(&kv)
+					}
+					return;
+				}
+
+				self.pack(&kv);
+			});
+		});
 	}
 
 	fn write_all(&mut self, bytes: &[u8]) {
