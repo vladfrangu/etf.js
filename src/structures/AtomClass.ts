@@ -22,11 +22,6 @@ class Atom {
 		return this.name;
 	}
 
-	// @ts-ignore used on the rust side
-	private get __etfjs_rustString__() {
-		return this.name;
-	}
-
 }
 
 export default (name: string) => new Atom(name);
