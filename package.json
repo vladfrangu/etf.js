@@ -37,7 +37,7 @@
     "Antonio Román <kyradiscord@gmail.com> (https://kyranet.dev)"
   ],
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "^0.1.3",
+    "@istanbuljs/nyc-config-typescript": "^1.0.0",
     "@types/node": "^12.6.8",
     "@types/pako": "^1.0.1",
     "@types/tape": "^4.2.33",
