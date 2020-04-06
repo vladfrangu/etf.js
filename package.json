@@ -46,7 +46,7 @@
     "erlpack": "github:discordapp/erlpack",
     "eslint": "^6.1.0",
     "eslint-config-bamboo": "^1.3.0",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.1",
     "source-map-support": "^0.5.12",
     "tap-nyc": "^1.0.3",
     "tap-xunit": "^2.4.1",
