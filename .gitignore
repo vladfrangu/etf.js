@@ -11,3 +11,4 @@ coverage/
 
 # Test results
 test.xml
+target/
