@@ -44,7 +44,7 @@
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "erlpack": "github:discordapp/erlpack",
-    "eslint": "^6.1.0",
+    "eslint": "^7.16.0",
     "eslint-config-bamboo": "^1.3.0",
     "nyc": "^14.1.1",
     "source-map-support": "^0.5.12",
