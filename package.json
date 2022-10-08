@@ -34,7 +34,7 @@
     "pako": "^1.0.10"
   },
   "contributors": [
-    "Antonio Román <kyradiscord@gmail.com> (https://kyranet.dev)"
+    "Aura Román <kyradiscord@gmail.com> (https://kyra.dev)"
   ],
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^0.1.3",

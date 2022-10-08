@@ -71,7 +71,7 @@ Plus added support for Maps (will be converted into Objects) and Sets (will be c
 
 `etf.js` is heavily based of [`binarytf`][binarytf] for the structure, and could not have been done without the help from it's author:
 
-- [Antonio Román](https://github.com/kyranet)
+- [Aura Román](https://kyra.dev)
 
 ## Contributing
 
