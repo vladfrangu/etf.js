@@ -563,7 +563,7 @@ export class Unpacker {
 	private decompress() {
 		// Read the length, but ignore it as we don't need it
 		this.read32();
-		const unpackedBuffer = pako.deflate(this._buffer!.subarray(this.offset));
+		const unpackedBuffer = pako.inflate(this._buffer!.subarray(this.offset));
 
 		return new Unpacker(unpackedBuffer).read();
 	}
