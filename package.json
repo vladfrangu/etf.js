@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/vladfrangu/etf.js#readme",
   "dependencies": {
-    "pako": "^1.0.10"
+    "pako": "^2.0.3"
   },
   "contributors": [
     "Aura Román <kyradiscord@gmail.com> (https://kyra.dev)"
