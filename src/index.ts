@@ -1,16 +1,27 @@
-import { Packer } from './lib/Packer';
-import { Unpacker } from './lib/Unpacker';
+import { native_pack as nativePack } from '../wasm/etfjs';
+import Atom from './structures/AtomClass';
 
-/**
- * Packs the data into a serialized ETF buffer
- * @param data The data to pack
- */
-export const pack = (data: unknown) => new Packer(data).process();
+export const pack = (value: any) => {
+	try {
+		return new Uint8Array(nativePack(value));
+	} catch (err) {
+		if (Error.captureStackTrace) Error.captureStackTrace(err);
+		throw err;
+	}
+};
 
-/**
- * Unpacks the ETF data into usable JS objects
- * @param buffer The raw data
- */
-export const unpack = (buffer: Uint8Array) => new Unpacker(buffer).unpack();
+export { Atom };
 
-export { default as Atom } from './lib/structures/Atom';
+console.log(pack({
+	'Atom(hi mommy)': true,
+	'hi': false
+}));
+
+// @ts-ignore
+console.log(pack(new Map([
+	[Atom('hi'), true],
+	['tits', false]
+])));
+// console.log(pack(['Hello!']));
+// console.log(pack(Symbol('Oh la la!')));
+// console.log(pack(42069n));
